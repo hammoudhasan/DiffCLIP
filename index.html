@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiffCLIP: Differential Attention Meets CLIP</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="header-container">
+            <h1 class="logo">DiffCLIP</h1>
+            <p class="tagline">Differential Attention Meets CLIP</p>
+            <div>
+                <a href="#abstract" class="btn">
+                    <i class="fas fa-book-open"></i>
+                    Abstract
+                </a>
+                <a href="https://github.com/hammoudhasan/DiffCLIP" class="btn btn-outline">
+                    <i class="fab fa-github"></i>
+                    GitHub
+                </a>
+                <a href="https://arxiv.org/" class="btn btn-outline">
+                    <i class="fas fa-file-pdf"></i>
+                    arXiv
+                </a>
+                <a href="https://huggingface.co/collections/hammh0a/diffclip-67cd8d3b7c6e6ea1cc26cd93" class="btn btn-outline">
+                    <span class="hf-emoji">🤗</span>
+                    HuggingFace
+                </a>
+            </div>
+            <div class="authors">
+                <p class="author-names">
+                    <a href="https://scholar.google.com/citations?user=Plf1JSIAAAAJ&hl=en&oi=ao" target="_blank" class="author-link">Hasan Abed Al Kader Hammoud</a> and 
+                    <a href="https://scholar.google.com/citations?user=rVsGTeEAAAAJ&hl=en" target="_blank" class="author-link">Bernard Ghanem</a>
+                </p>
+                <p>King Abdullah University of Science and Technology (KAUST)</p>
+                <p class="author-email"><i class="fas fa-envelope"></i> hasanabedalkader.hammoud@kaust.edu.sa</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-container">
+            <ul class="nav-links">
+                <li><a href="#abstract">Abstract</a></li>
+                <li><a href="#key-idea">Key Idea</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#conclusion">Conclusion</a></li>
+                <li><a href="#cite-us">References</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Abstract Section -->
+    <section id="abstract" class="abstract">
+        <div class="container">
+            <h2 class="section-title">Abstract</h2>
+            <div class="abstract-content">
+                <p>
+                    We propose DiffCLIP, a novel vision-language model that extends the differential attention mechanism to CLIP architectures. Differential attention was originally developed for large language models to amplify relevant context while canceling out noisy information. In this work, we integrate this mechanism into CLIP's dual encoder (image and text) framework. With minimal additional parameters, DiffCLIP achieves superior performance on image-text understanding tasks. Across zero-shot classification, retrieval, and robustness benchmarks, DiffCLIP consistently outperforms baseline CLIP models. Notably, these gains come with negligible computational overhead, demonstrating that differential attention can significantly enhance multi-modal representations without sacrificing efficiency.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Key Idea Section -->
+    <section id="key-idea" class="features">
+        <div class="container">
+            <h2 class="section-title">The Key Idea: Differential Attention</h2>
+            
+            <div class="math-section">
+                <h3 class="math-title">The Mathematics Behind Differential Attention</h3>
+                <div class="math-content">
+                    <div class="math-text">
+                        <p>
+                            Differential Attention addresses attention noise by learning two separate attention distributions and subtracting one from the other, effectively canceling out spurious alignments.
+                        </p>
+                        <div class="math-formula">
+                            <p>\[ A_{diff} = A_1 - \lambda \cdot A_2 \]</p>
+                            <p>where \(\lambda\) is a learnable parameter</p>
+                        </div>
+                        <p>
+                            For DiffCLIP, we apply this mechanism to both the image and text encoders. The model learns to use one attention map to highlight important features while the second map identifies and cancels out noise or irrelevant patterns. With minimal additional parameters (roughly 0.003%), DiffCLIP effectively filters out noisy alignments in both vision and text streams.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Demo Section -->
+            <div class="interactive-demo">
+                <h3>Visualize Differential Attention in Action</h3>
+                <p>Select an image and query to see how DiffCLIP focuses attention compared to standard CLIP:</p>
+                
+                <div class="demo-controls">
+                    <div class="image-selection">
+                        <h4>Step 1: Choose an image</h4>
+                        <div class="image-options">
+                            <div class="image-option" data-image="a-cute-running-after-a-ball--colorful--a-flower-is (2)_original.png">
+                                <img src="images/individual_images/a-cute-running-after-a-ball--colorful--a-flower-is (2)_original.png" alt="Dog and flower" class="thumbnail">
+                                <span>Image 1: Dog & Flower</span>
+                            </div>
+                            <div class="image-option" data-image="mystery-case-files-inspired-detective-office--diml (1)_original.png">
+                                <img src="images/individual_images/mystery-case-files-inspired-detective-office--diml (1)_original.png" alt="Detective office" class="thumbnail">
+                                <span>Image 2: Detective Office</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="query-selection" id="query-dog-flower" style="display: none;">
+                        <h4>Step 2: Choose a query</h4>
+                        <div class="query-options">
+                            <button class="query-btn" data-query="dog" data-base-image="a-cute-running-after-a-ball--colorful--a-flower-is (2)">dog</button>
+                            <button class="query-btn" data-query="flower" data-base-image="a-cute-running-after-a-ball--colorful--a-flower-is (2)">flower</button>
+                        </div>
+                    </div>
+                    
+                    <div class="query-selection" id="query-lamp-mug" style="display: none;">
+                        <h4>Step 2: Choose a query</h4>
+                        <div class="query-options">
+                            <button class="query-btn" data-query="desk lamp" data-base-image="mystery-case-files-inspired-detective-office--diml (1)">lamp</button>
+                            <button class="query-btn" data-query="mug" data-base-image="mystery-case-files-inspired-detective-office--diml (1)">mug</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="attention-visualization" style="display: none;">
+                    <div class="vis-container">
+                        <div class="vis-column">
+                            <h4>Standard CLIP</h4>
+                            <div class="vis-image-container">
+                                <img id="clip-attention" src="" alt="CLIP attention visualization">
+                            </div>
+                        </div>
+                        <div class="vis-column">
+                            <h4>DiffCLIP</h4>
+                            <div class="vis-image-container">
+                                <img id="diffclip-attention" src="" alt="DiffCLIP attention visualization">
+                            </div>
+                        </div>
+                    </div>
+                    <p class="vis-explanation">
+                        Notice how DiffCLIP produces more focused attention by suppressing irrelevant areas, leading to improved performance across various tasks.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Results Section -->
+    <section id="results" class="results">
+        <div class="container">
+            <h2 class="section-title">Key Results</h2>
+            
+            <div class="result-section-intro">
+                <p>Our experimental evaluation demonstrates that differential attention consistently enhances CLIP performance across diverse benchmarks.</p>
+            </div>
+            
+            <div class="results-slider">                
+                <div class="results-track">
+                    <!-- Original cards -->
+                    <div class="results-container">
+                        <div class="result-card">
+                            <img src="images/results-1.png" alt="OOD Zero-Shot Performance" class="result-img" data-full="images/results-1.png">
+                            <div class="result-content">
+                                <h3 class="exp-question">Does Differential Attention Improve Out-of-Domain Robustness?</h3>
+                                <p class="result-text">
+                                    <strong>Finding:</strong> DiffCLIP outperforms standard CLIP on challenging out-of-domain variants with an average improvement of 2.1% on CC12M pretraining.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="result-card">
+                            <img src="images/radar-1.png" alt="MMVP-VLM Benchmarking" class="result-img" data-full="images/radar-1.png">
+                            <div class="result-content">
+                                <h3 class="exp-question">Does DiffCLIP Improve Fine-Grained Visual Understanding?</h3>
+                                <p class="result-text">
+                                    <strong>Finding:</strong> On the MMVP-VLM benchmark, DiffCLIP improves accuracy by 5.7% relative to baseline CLIP.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-container">
+                        <div class="result-card">
+                            <img src="images/cc12m-1.png" alt="DiffCLIP Variants Comparison" class="result-img" data-full="images/cc12m-1.png">
+                            <div class="result-content">
+                                <h3 class="exp-question">Does Applying Differential Attention to Vision Only Suffice?</h3>
+                                <p class="result-text">
+                                    <strong>Finding:</strong> DiffCLIP<sup>†</sup> with differential attention only in the vision encoder achieved comparable or better results, suggesting that most benefits come from enhancing visual representations.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="result-card">
+                            <img src="images/cc12m-1.png" alt="Dynamic vs Static Lambda Parameter" class="result-img" data-full="images/cc12m-1.png">
+                            <div class="result-content">
+                                <h3 class="exp-question">Dynamic or Static λ<sub>init</sub>?</h3>
+                                <p class="result-text">
+                                    <strong>Finding:</strong> The dynamic approach (DiffCLIP<sup>*</sup>) showed significant gains on zero-shot ImageNet (+2.8%) and text retrieval tasks compared to fixed initialization. However, it reduces performance in other tasks compared to fixed initialization.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Duplicate cards for infinite scrolling -->
+                    <div class="results-container">
+                        <div class="result-card">
+                            <img src="images/results-1.png" alt="OOD Zero-Shot Performance" class="result-img" data-full="images/results-1.png">
+                            <div class="result-content">
+                                <h3 class="exp-question">Does Differential Attention Improve Out-of-Domain Robustness?</h3>
+                                <p class="result-text">
+                                    <strong>Finding:</strong> DiffCLIP outperforms standard CLIP on challenging out-of-domain variants with an average improvement of 2.1%, demonstrating more robust feature generalization under significant distribution shifts.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="result-card">
+                            <img src="images/radar-1.png" alt="MMVP-VLM Benchmarking" class="result-img" data-full="images/radar-1.png">
+                            <div class="result-content">
+                                <h3 class="exp-question">Does DiffCLIP Improve Fine-Grained Visual Understanding?</h3>
+                                <p class="result-text">
+                                    <strong>Finding:</strong> On the MMVP-VLM benchmark, DiffCLIP improves accuracy by 5.7% relative to baseline CLIP, suggesting that differential attention helps attend to more subtle details in images.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Image Modal -->
+                <div id="imageModal" class="modal">
+                    <span class="modal-close">&times;</span>
+                    <img class="modal-content" id="modalImage">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Conclusion Section -->
+    <section id="conclusion" class="conclusion">
+        <div class="container">
+            <h2 class="section-title">Conclusion</h2>
+            <div class="conclusion-content">
+                <p>
+                    We introduced DiffCLIP, which integrates differential attention into CLIP-based vision-language models to better filter out noisy alignments.
+                </p>
+                
+                <div class="highlight-box">
+                    <p>
+                        <strong>Key Contributions:</strong>
+                    </p>
+                    <ul class="contribution-list">
+                        <li class="contribution-item fade-in">First integration of differential attention into CLIP-based VLMs, yielding a simple yet effective approach to reducing attention noise.</li>
+                        <li class="contribution-item fade-in">Consistent gains over baseline CLIP across diverse tasks, with a minimal parameter overhead of roughly 0.003%.</li>
+                        <li class="contribution-item fade-in">Detailed ablations showing that dynamic initialization can boost zero-shot performance, and applying differential attention solely in the vision encoder captures most benefits.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- References Section -->
+    <section id="cite-us" class="references">
+        <div class="container">
+            <h2 class="section-title">References</h2>
+            <ul class="references-list">
+                <li>
+                    <div class="reference-title">DiffCLIP: Differential Attention Meets CLIP</div>
+                    <div class="reference-authors">
+                        <a href="https://scholar.google.com/citations?user=Plf1JSIAAAAJ&hl=en&oi=ao" target="_blank" class="reference-author-link">Hasan Abed Al Kader Hammoud</a> and 
+                        <a href="https://scholar.google.com/citations?user=rVsGTeEAAAAJ&hl=en" target="_blank" class="reference-author-link">Bernard Ghanem</a>
+                    </div>
+                    <div class="reference-venue">arXiv (Coming Soon)</div>
+                    <div class="bibtex-container">@article{diffclip2025,
+    title={DiffCLIP: Differential Attention Meets CLIP},
+    author={Hammoud, Hasan Abed Al Kader and Ghanem, Bernard},
+    journal={arXiv preprint},
+    year={2025}
+}</div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <div class="scroll-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">Home</a>
+                <a href="#abstract">Abstract</a>
+                <a href="#key-idea">Key Idea</a>
+                <a href="#results">Results</a>
+                <a href="#conclusion">Conclusion</a>
+                <a href="#cite-us">References</a>
+            </div>
+            <p class="footer-text">&copy; 2025 DiffCLIP. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
