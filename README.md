@@ -5,8 +5,10 @@
 
 
   <p>
-    <a href="https://arxiv.org/"><img src="https://img.shields.io/badge/arXiv-Coming%20Soon-B31B1B.svg" alt="arXiv"></a>
-    <a href="https://huggingface.co/collections/hammh0a/diffclip-67cd8d3b7c6e6ea1cc26cd93"><img src="https://img.shields.io/badge/🤗%20Hugging%20Face-Collection-yellow" alt="Hugging Face Collection"></a>
+<a href="https://arxiv.org/abs/2503.06626">
+    <img src="https://img.shields.io/badge/arXiv-2503.06626-B31B1B.svg" alt="arXiv">
+</a>
+<a href="https://huggingface.co/collections/hammh0a/diffclip-67cd8d3b7c6e6ea1cc26cd93"><img src="https://img.shields.io/badge/🤗%20Hugging%20Face-Collection-yellow" alt="Hugging Face Collection"></a>
   </p>
 </div>
 
