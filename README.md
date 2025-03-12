@@ -90,10 +90,13 @@ This will:
 ## References
 
 ```
-@article{hammoud2024differential,
-  title={Differential Transformer},
-  author={Hammoud, Hasan Abed Al Kader and Ghanem, Bernard},
-  journal={arXiv preprint arXiv:2410.05258},
-  year={2024}
+@misc{hammoud2025diffclipdifferentialattentionmeets,
+      title={DiffCLIP: Differential Attention Meets CLIP}, 
+      author={Hasan Abed Al Kader Hammoud and Bernard Ghanem},
+      year={2025},
+      eprint={2503.06626},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2503.06626}, 
 }
 ```
